@@ -109,7 +109,7 @@ nextCoprime n m = let (d, _, _) = extGCD n m
 chooseKeys :: Integer -> Integer -> Integer -> (Integer,Integer)
 chooseKeys p q e = let n = (p-1)*(q-1)
                        e' = nextCoprime e n
-                       d' = minv e' d'
+                       d' = minv e' n
                    in (e', d')
 
 
