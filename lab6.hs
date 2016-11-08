@@ -133,11 +133,13 @@ blockSize m b = let index = 0
 -- base b, where b = length message_chars (i.e., the characters of xs are
 -- themselves the digits of the number in base b)
 str2Integer :: [Char] -> Integer
-str2Integer xs = let charIndex = map (\x -> elemIndex x message_chars) xs
-                     rangeIndex = reverse [0..(length xs - 1)] 
-                     expIndex = map (\x -> (length message_chars)^x) rangeIndex 
-                     multiplicativeResult = zipWith (\x y -> x*y) charIndex expIndex
+str2Integer xs = (str2Integer' xs) - 1 where
+  str2Integer' xs = let charIndex = map (\x -> (elemIndex x message_chars) + 1) xs
+                        rangeIndex = reverse [0..(length xs - 1)] 
+                        expIndex = map (\x -> (length message_chars)^x) rangeIndex 
+                        multiplicativeResult = zipWith (\x y -> x*y) charIndex expIndex
                      in toInteger (foldl (+) (head multiplicativeResult) (tail multiplicativeResult))
+  
  
 -- the inverse function that converts the Integer back into a string
 -- integer2str :: Integer -> [Char]
@@ -168,3 +170,22 @@ and then
    6. convert the Integers back into strings
    7. concatenate the strings to get the original message back
 -}
+p = 11113
+q = 22229
+m = p * q
+n = (p-1)*(q-1)
+e = nextCoprime 5 n
+(e', d) = chooseKeys p q e
+message = "obama"
+brokenMessage = mkMessage message m
+enc = crypt (m, e) brokenMessage
+dec = crypt (m, d) enc
+decryptedMessage = map (\x -> integer2str x) dec
+
+con z | (length z == 0) = []
+      | otherwise = (head z):(con (tail z))
+
+concatenatedMessage = head (con decryptedMessage)
+
+
+
